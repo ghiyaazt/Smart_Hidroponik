@@ -48,7 +48,7 @@ class _MonitoringPageState extends State<MonitoringPage> {
       "ppm_max": 1400,
     },
     "Kangkung": {
-      "instructions": "1. Siapkan benih kangkung.\n2. Rendam benih selama 8 jam.\n3. Pindahkan ke media tanam hidroponik.\n4. Pastikan pH air 6.5-7.5 dan suhu 25-30°C.",
+      "instructions": "1. Siapkn benih kangkung.\n2. Rendam benih selama 8 jam.\n3. Pindahkan ke media tanam hidroponik.\n4. Pastikan pH air 6.5-7.5 dan suhu 25-30°C.",
       "ppm_min": 600,
       "ppm_max": 1000,
     },
