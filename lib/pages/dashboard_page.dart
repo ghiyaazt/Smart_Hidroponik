@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
+import 'package:table_calendar/table_calendar.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -198,10 +198,8 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.notifications, color: Colors.green),
-            onPressed: () {},
-          ),
+          // Removed the notification bell icon
+          const SizedBox(width: 40), // Added to maintain spacing
         ],
       ),
     );
@@ -794,70 +792,183 @@ class CalendarPage extends StatefulWidget {
 }
 
 class _CalendarPageState extends State<CalendarPage> {
-  DateTime selectedDate = DateTime.now();
+  DateTime _focusedDay = DateTime.now();
+  DateTime? _selectedDay;
+  Map<DateTime, List<String>> events = {
+    DateTime(2025, 5, 8): ["Water plants", "Check PPM levels"],
+    DateTime(2025, 5, 10): ["Add nutrients", "Prune leaves"],
+    DateTime(2025, 5, 15): ["Harvest Sawi"],
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedDay = _focusedDay;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final dateStr = DateFormat('EEEE, dd MMMM yyyy').format(selectedDate);
     return Scaffold(
       appBar: AppBar(title: const Text("Calendar History")),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ElevatedButton(
-              onPressed: () async {
-                final DateTime? picked = await showDatePicker(
-                  context: context,
-                  initialDate: selectedDate,
-                  firstDate: DateTime(2023),
-                  lastDate: DateTime(2030),
-                );
-                if (picked != null) {
-                  setState(() => selectedDate = picked);
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+      body: Column(
+        children: [
+          Container(
+            margin: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              ],
+            ),
+            child: TableCalendar(
+              firstDay: DateTime(2025, 1, 1),
+              lastDay: DateTime(2025, 12, 31),
+              focusedDay: _focusedDay,
+              selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+              onDaySelected: (selectedDay, focusedDay) {
+                setState(() {
+                  _selectedDay = selectedDay;
+                  _focusedDay = focusedDay;
+                });
+              },
+              calendarStyle: CalendarStyle(
+                todayDecoration: BoxDecoration(
+                  color: Colors.green.withOpacity(0.3),
+                  shape: BoxShape.circle,
+                ),
+                selectedDecoration: const BoxDecoration(
+                  color: Colors.green,
+                  shape: BoxShape.circle,
+                ),
+                markerDecoration: BoxDecoration(
+                  color: Colors.green[700],
+                  shape: BoxShape.circle,
+                ),
+                markersAlignment: Alignment.bottomRight,
+                markersAutoAligned: false,
               ),
-              child: Text("Select Date: $dateStr"),
+              headerStyle: HeaderStyle(
+                formatButtonVisible: false,
+                titleCentered: true,
+                leftChevronIcon: const Icon(Icons.chevron_left, color: Colors.green),
+                rightChevronIcon: const Icon(Icons.chevron_right, color: Colors.green),
+                titleTextStyle: const TextStyle(
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              eventLoader: (day) => events[day] ?? [],
             ),
-            const SizedBox(height: 24),
-            Text(
-              "History for ${DateFormat('dd/MM/yyyy').format(selectedDate)}:",
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            _buildHistoryItem(Icons.opacity, "Water Volume", "2 Liter"),
-            _buildHistoryItem(Icons.science, "PPM Level", "950"),
-            _buildHistoryItem(Icons.eco, "Nutrients", "AB Mix 15ml"),
-          ],
-        ),
+          ),
+          Expanded(
+            child: _buildEventList(),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildHistoryItem(IconData icon, String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
+  Widget _buildEventList() {
+    final eventsForSelectedDay = events[_selectedDay] ?? [];
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: Colors.green),
-          const SizedBox(width: 12),
           Text(
-            label,
-            style: const TextStyle(fontWeight: FontWeight.w500),
+            "Events on ${DateFormat('EEEE, MMMM d, y').format(_selectedDay!)}",
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          const Spacer(),
-          Text(
-            value,
-            style: TextStyle(color: Colors.grey[700]),
+          const SizedBox(height: 8),
+          if (eventsForSelectedDay.isEmpty)
+            const Padding(
+              padding: EdgeInsets.all(16),
+              child: Text("No events scheduled for this day"),
+            )
+          else
+            Expanded(
+              child: ListView.builder(
+                itemCount: eventsForSelectedDay.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ListTile(
+                      leading: const Icon(Icons.circle, color: Colors.green, size: 12),
+                      title: Text(eventsForSelectedDay[index]),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.add_alert, color: Colors.green),
+                        onPressed: () {
+                          // Add reminder functionality
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ElevatedButton(
+            onPressed: () {
+              _showAddEventDialog();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              minimumSize: const Size(double.infinity, 50),
+            ),
+            child: const Text("Add New Event"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAddEventDialog() {
+    final TextEditingController eventController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Add New Event"),
+        content: TextField(
+          controller: eventController,
+          decoration: const InputDecoration(
+            labelText: "Event Description",
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (eventController.text.isNotEmpty) {
+                setState(() {
+                  if (events.containsKey(_selectedDay)) {
+                    events[_selectedDay]!.add(eventController.text);
+                  } else {
+                    events[_selectedDay!] = [eventController.text];
+                  }
+                });
+                Navigator.pop(context);
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+            child: const Text("Add"),
           ),
         ],
       ),
