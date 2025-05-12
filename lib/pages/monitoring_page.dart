@@ -75,6 +75,51 @@ class _MonitoringPageState extends State<MonitoringPage> {
     });
   }
 
+void tambahNutrisiSecaraManual() {
+  final controller = TextEditingController();
+
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text("Tambah Nutrisi Manual"),
+        content: TextField(
+          controller: controller,
+          keyboardType: TextInputType.number,
+          decoration: const InputDecoration(
+            labelText: "Jumlah nutrisi (ppm)",
+            hintText: "Contoh: 100",
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("Batal"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final input = int.tryParse(controller.text);
+              if (input != null && input > 0) {
+                final docRef = firestore.collection("hidroponik").doc("latest");
+                final currentData = await docRef.get();
+
+                if (currentData.exists) {
+                  final currentNutrisi = currentData["nutrisi"] ?? 0;
+                  await docRef.update({
+                    "nutrisi": currentNutrisi + input,
+                  });
+                }
+                Navigator.of(context).pop();
+              }
+            },
+            child: const Text("Tambah"),
+          ),
+        ],
+      );
+    },
+  );
+}
+
   void updateOtomatis(bool value) {
     firestore.collection("monitoring").doc("data").update({"otomatis": value});
   }
@@ -149,8 +194,24 @@ class _MonitoringPageState extends State<MonitoringPage> {
                   isAuto = value;
                 });
                 updateOtomatis(value);
+              
               },
             ).animate().fadeIn(duration: 1000.ms).slideY(begin: 0.3),
+            const SizedBox(height: 12),
+            ElevatedButton.icon(
+              onPressed: tambahNutrisiSecaraManual,
+              icon: const Icon(Icons.add),
+              label: const Text("Tambah Nutrisi Manual"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+
             const SizedBox(height: 20),
             DropdownButtonFormField<String>(
               value: selectedPlant,
