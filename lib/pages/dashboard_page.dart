@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -35,26 +36,32 @@ class _DashboardPageState extends State<DashboardPage> {
     Note(title: "Mój ogród", content: "08.05.2025 - menanam", date: DateTime(2025, 5, 8), garden: "clhuy"),
   ];
 
-  final Map<String, Map<String, dynamic>> plantData = {
-    "Sawi": {
-      "scientificName": "Brassica juncea",
-      "standardPPM": "800-1200",
-      "description": "Sayuran daun yang tumbuh cepat",
-      "imageUrl": "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce",
-    },
-    "Selada": {
-      "scientificName": "Lactuca sativa",
-      "standardPPM": "560-840",
-      "description": "Sayuran daun segar untuk salad",
-      "imageUrl": "https://images.unsplash.com/photo-1594282418426-1f7ba964ecc5",
-    },
-    "Bayam": {
-      "scientificName": "Amaranthus spp.",
-      "standardPPM": "1260-1610",
-      "description": "Sayuran kaya zat besi",
-      "imageUrl": "https://images.unsplash.com/photo-1576045057995-568f588f82fb",
-    },
-  };
+  late Map<String, Map<String, dynamic>> plantData;
+
+  @override
+  void initState() {
+    super.initState();
+    plantData = {
+      "Sawi": {
+        "scientificName": "Brassica juncea",
+        "standardPPM": "800-1200",
+        "description": "Sayuran daun yang tumbuh cepat",
+        "imageUrl": "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce",
+      },
+      "Selada": {
+        "scientificName": "Lactuca sativa",
+        "standardPPM": "560-840",
+        "description": "Sayuran daun segar untuk salad",
+        "imageUrl": "https://images.unsplash.com/photo-1594282418426-1f7ba964ecc5",
+      },
+      "Bayam": {
+        "scientificName": "Amaranthus spp.",
+        "standardPPM": "1260-1610",
+        "description": "Sayuran kaya zat besi",
+        "imageUrl": "https://images.unsplash.com/photo-1576045057995-568f588f82fb",
+      },
+    };
+  }
 
   void _showKnowledgeDialog(BuildContext context) {
     final plantInfo = plantData[selectedPlant]!;
@@ -79,6 +86,152 @@ class _DashboardPageState extends State<DashboardPage> {
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text("Tutup", style: TextStyle(color: Colors.green)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAddPlantDialog(BuildContext context) {
+    final TextEditingController plantNameController = TextEditingController();
+    final TextEditingController scientificNameController = TextEditingController();
+    final TextEditingController minPPMController = TextEditingController();
+    final TextEditingController maxPPMController = TextEditingController();
+    final TextEditingController descriptionController = TextEditingController();
+    final TextEditingController imageUrlController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Add New Plant"),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: plantNameController,
+                decoration: const InputDecoration(
+                  labelText: "Plant Name*",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: scientificNameController,
+                decoration: const InputDecoration(
+                  labelText: "Scientific Name*",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: minPPMController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: "Min PPM*",
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: TextField(
+                      controller: maxPPMController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: "Max PPM*",
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: descriptionController,
+                maxLines: 3,
+                decoration: const InputDecoration(
+                  labelText: "Description*",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: imageUrlController,
+                decoration: const InputDecoration(
+                  labelText: "Image URL (optional)",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Validasi input
+              if (plantNameController.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Plant name is required")),
+                );
+                return;
+              }
+              
+              if (scientificNameController.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Scientific name is required")),
+                );
+                return;
+              }
+              
+              if (minPPMController.text.isEmpty || maxPPMController.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("PPM values are required")),
+                );
+                return;
+              }
+              
+              if (descriptionController.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Description is required")),
+                );
+                return;
+              }
+              
+              // Tambahkan tanaman baru
+              final newPlant = {
+                "scientificName": scientificNameController.text,
+                "standardPPM": "${minPPMController.text}-${maxPPMController.text}",
+                "description": descriptionController.text,
+                "imageUrl": imageUrlController.text.isNotEmpty 
+                    ? imageUrlController.text 
+                    : "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce", // default image
+              };
+              
+              setState(() {
+                plantData[plantNameController.text] = newPlant;
+                selectedPlant = plantNameController.text;
+                currentPPM = (double.parse(minPPMController.text) + double.parse(maxPPMController.text)) / 2;
+              });
+              
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("${plantNameController.text} has been added successfully!"),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+              
+              Navigator.pop(context);
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+            child: const Text("Add Plant"),
           ),
         ],
       ),
@@ -144,7 +297,7 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
             SliverToBoxAdapter(child: _buildHeader(context)),
             SliverToBoxAdapter(child: _buildGardenCard(context, plantInfo)),
-            SliverToBoxAdapter(child: _buildAddGrowingPlace()),
+            SliverToBoxAdapter(child: _buildAddGrowingPlace(context)),
             SliverToBoxAdapter(child: _buildShortcuts(context)),
             SliverToBoxAdapter(child: _buildWeatherSection()),
             SliverToBoxAdapter(child: _buildRecentNotes()),
@@ -198,8 +351,7 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             ),
           ),
-          // Removed the notification bell icon
-          const SizedBox(width: 40), // Added to maintain spacing
+          const SizedBox(width: 40),
         ],
       ),
     );
@@ -309,7 +461,7 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildAddGrowingPlace() {
+  Widget _buildAddGrowingPlace(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Card(
@@ -330,7 +482,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ),
               FloatingActionButton(
-                onPressed: () {},
+                onPressed: () => _showAddPlantDialog(context),
                 backgroundColor: Colors.green,
                 mini: true,
                 child: const Icon(Icons.add, color: Colors.white),
