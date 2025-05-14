@@ -176,7 +176,6 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
           ElevatedButton(
             onPressed: () {
-              // Validasi input
               if (plantNameController.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Plant name is required")),
@@ -205,14 +204,13 @@ class _DashboardPageState extends State<DashboardPage> {
                 return;
               }
               
-              // Tambahkan tanaman baru
               final newPlant = {
                 "scientificName": scientificNameController.text,
                 "standardPPM": "${minPPMController.text}-${maxPPMController.text}",
                 "description": descriptionController.text,
                 "imageUrl": imageUrlController.text.isNotEmpty 
                     ? imageUrlController.text 
-                    : "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce", // default image
+                    : "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce",
               };
               
               setState(() {
@@ -299,7 +297,6 @@ class _DashboardPageState extends State<DashboardPage> {
             SliverToBoxAdapter(child: _buildGardenCard(context, plantInfo)),
             SliverToBoxAdapter(child: _buildAddGrowingPlace(context)),
             SliverToBoxAdapter(child: _buildShortcuts(context)),
-            SliverToBoxAdapter(child: _buildWeatherSection()),
             SliverToBoxAdapter(child: _buildRecentNotes()),
           ],
         ),
@@ -547,104 +544,6 @@ class _DashboardPageState extends State<DashboardPage> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildWeatherSection() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(Icons.wb_sunny, color: Colors.orange[700]),
-                  const SizedBox(width: 8),
-                  const Text(
-                    "Weather",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.location_on, color: Colors.green[700]),
-                  hintText: "Add Location",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey[100],
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _weatherInfo("28°C", "Temperature", Icons.thermostat),
-                  _weatherInfo("12 km/h", "Wind", Icons.air),
-                  _weatherInfo("65%", "Humidity", Icons.water_drop),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green[50],
-                        foregroundColor: Colors.green[800],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                      ),
-                      child: const Text("Garden Report"),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                      ),
-                      child: const Text("Forecast"),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _weatherInfo(String value, String label, IconData icon) {
-    return Column(
-      children: [
-        Icon(icon, color: Colors.green[700]),
-        const SizedBox(height: 4),
-        Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green[800])),
-        Text(label, style: TextStyle(color: Colors.grey[600], fontSize: 12)),
-      ],
     );
   }
 
