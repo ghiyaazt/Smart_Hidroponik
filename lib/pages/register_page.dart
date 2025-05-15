@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterPage extends StatefulWidget {
-  final VoidCallback onRegisterSuccess;
-  const RegisterPage({super.key, required this.onRegisterSuccess});
+  const RegisterPage({super.key});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -35,7 +34,10 @@ class _RegisterPageState extends State<RegisterPage> {
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
-      widget.onRegisterSuccess();
+      // Setelah register berhasil, navigasi pop untuk kembali ke login
+      if (mounted) {
+        Navigator.pop(context);
+      }
     } on FirebaseAuthException catch (e) {
       setState(() {
         _error = e.message;
@@ -92,9 +94,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               const SizedBox(height: 16),
               TextButton(
-                onPressed: () {
-                  Navigator.pop(context); // Kembali ke login
-                },
+                onPressed: () => Navigator.pop(context),
                 child: const Text("Sudah punya akun? Login"),
               ),
             ],

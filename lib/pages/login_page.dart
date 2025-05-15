@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'register_page.dart'; // Pastikan import ini sesuai path kamu
+import 'register_page.dart';
 
 class LoginPage extends StatefulWidget {
-  final VoidCallback onLoginSuccess;
-  const LoginPage({super.key, required this.onLoginSuccess});
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -26,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
-      widget.onLoginSuccess();
+      // Tidak perlu memanggil onLoginSuccess karena StreamBuilder di main.dart akan menangani perubahan state
     } on FirebaseAuthException catch (e) {
       setState(() {
         _error = e.message;
@@ -42,11 +41,7 @@ class _LoginPageState extends State<LoginPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => RegisterPage(
-          onRegisterSuccess: () {
-            Navigator.pop(context); // Kembali ke login setelah register
-          },
-        ),
+        builder: (_) => const RegisterPage(),
       ),
     );
   }

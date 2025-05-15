@@ -1,4 +1,3 @@
-// filepath: [main.dart](http://_vscodecontentref_/1)
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -55,14 +54,6 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.green,
         scaffoldBackgroundColor: Colors.grey[50],
       ),
-      routes: {
-        '/login': (context) => LoginPage(
-              onLoginSuccess: () => setState(() {}),
-            ),
-        '/register': (context) => RegisterPage(
-              onRegisterSuccess: () => Navigator.pop(context),
-            ),
-      },
       home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
@@ -71,8 +62,8 @@ class _MyAppState extends State<MyApp> {
               body: Center(child: CircularProgressIndicator()),
             );
           }
+          
           if (snapshot.hasData) {
-            // User sudah login, tampilkan halaman utama dengan navbar
             return Scaffold(
               body: _pages[_selectedIndex],
               bottomNavigationBar: CurvedNavigationBar(
@@ -88,12 +79,14 @@ class _MyAppState extends State<MyApp> {
               ),
             );
           }
-          // User belum login, tampilkan halaman login
-          return LoginPage(
-            onLoginSuccess: () => setState(() {}),
-          );
+          
+          return const LoginPage();
         },
       ),
+      routes: {
+        '/login': (context) => const LoginPage(),
+        '/register': (context) => const RegisterPage(),
+      },
     );
   }
 }
