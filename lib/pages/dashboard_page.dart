@@ -32,9 +32,7 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   String selectedPlant = "Sawi";
   double currentPPM = 850.0;
-  final List<Note> notes = [
-    Note(title: "Mój ogród", content: "08.05.2025 - menanam", date: DateTime(2025, 5, 8), garden: "clhuy"),
-  ];
+  List<Note> notes = [];
 
   late Map<String, Map<String, dynamic>> plantData;
 
@@ -506,11 +504,19 @@ class _DashboardPageState extends State<DashboardPage> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _shortcutButton(Icons.notes, "Notes", Colors.green[100]!, Colors.green, () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => NotesPage(notes: notes, onNoteAdded: (note) {
-                  setState(() {
-                    notes.add(note);
-                  });
-                })));
+                Navigator.push(context, MaterialPageRoute(builder: (_) => NotesPage(
+                  notes: notes, 
+                  onNoteAdded: (note) {
+                    setState(() {
+                      notes.add(note);
+                    });
+                  },
+                  onNoteDeleted: (note) {
+                    setState(() {
+                      notes.remove(note);
+                    });
+                  },
+                )));
               }),
               _shortcutButton(Icons.calendar_today, "Calendar", Colors.blue[100]!, Colors.blue, () {
                 Navigator.push(context, MaterialPageRoute(builder: (_) => const CalendarPage()));
@@ -562,11 +568,19 @@ class _DashboardPageState extends State<DashboardPage> {
           if (notes.length > 3) 
             TextButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => NotesPage(notes: notes, onNoteAdded: (note) {
-                  setState(() {
-                    notes.add(note);
-                  });
-                })));
+                Navigator.push(context, MaterialPageRoute(builder: (_) => NotesPage(
+                  notes: notes, 
+                  onNoteAdded: (note) {
+                    setState(() {
+                      notes.add(note);
+                    });
+                  },
+                  onNoteDeleted: (note) {
+                    setState(() {
+                      notes.remove(note);
+                    });
+                  },
+                )));
               },
               child: const Text("View all notes", style: TextStyle(color: Colors.green)),
             ),
@@ -637,8 +651,14 @@ class Note {
 class NotesPage extends StatefulWidget {
   final List<Note> notes;
   final Function(Note) onNoteAdded;
+  final Function(Note) onNoteDeleted;
 
-  const NotesPage({super.key, required this.notes, required this.onNoteAdded});
+  const NotesPage({
+    super.key, 
+    required this.notes, 
+    required this.onNoteAdded,
+    required this.onNoteDeleted,
+  });
 
   @override
   State<NotesPage> createState() => _NotesPageState();
@@ -752,17 +772,38 @@ class _NotesPageState extends State<NotesPage> {
     );
   }
 
+  void _deleteNote(Note note) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Delete Note"),
+        content: const Text("Are you sure you want to delete this note?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              widget.onNoteDeleted(note);
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Note has been deleted")),
+              );
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text("Delete"),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Notes"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: _showAddNoteDialog,
-          ),
-        ],
       ),
       body: Column(
         children: [
@@ -786,43 +827,55 @@ class _NotesPageState extends State<NotesPage> {
               itemCount: notes.length,
               itemBuilder: (context, index) {
                 final note = notes[index];
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                return Dismissible(
+                  key: Key(note.title + note.date.toString()),
+                  background: Container(
+                    color: Colors.red,
+                    alignment: Alignment.centerRight,
+                    padding: const EdgeInsets.only(right: 20),
+                    child: const Icon(Icons.delete, color: Colors.white),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              note.title,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                  onDismissed: (direction) {
+                    _deleteNote(note);
+                  },
+                  child: Card(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                note.title,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
                               ),
-                            ),
-                            Text(
-                              DateFormat('dd.MM.yyyy').format(note.date),
-                              style: TextStyle(color: Colors.grey[600]),
+                              IconButton(
+                                icon: const Icon(Icons.delete, color: Colors.red),
+                                onPressed: () => _deleteNote(note),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(note.content),
+                          if (note.garden.isNotEmpty) ...[
+                            const SizedBox(height: 8),
+                            Chip(
+                              label: Text(note.garden),
+                              backgroundColor: Colors.green[50],
+                              labelStyle: TextStyle(color: Colors.green[800]),
                             ),
                           ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(note.content),
-                        if (note.garden.isNotEmpty) ...[
-                          const SizedBox(height: 8),
-                          Chip(
-                            label: Text(note.garden),
-                            backgroundColor: Colors.green[50],
-                            labelStyle: TextStyle(color: Colors.green[800]),
-                          ),
                         ],
-                      ],
+                      ),
                     ),
                   ),
                 );
@@ -830,6 +883,11 @@ class _NotesPageState extends State<NotesPage> {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showAddNoteDialog,
+        backgroundColor: Colors.green,
+        child: const Icon(Icons.add, size: 32),
       ),
     );
   }
