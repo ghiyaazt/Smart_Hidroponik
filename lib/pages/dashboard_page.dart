@@ -90,150 +90,6 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  void _showAddPlantDialog(BuildContext context) {
-    final TextEditingController plantNameController = TextEditingController();
-    final TextEditingController scientificNameController = TextEditingController();
-    final TextEditingController minPPMController = TextEditingController();
-    final TextEditingController maxPPMController = TextEditingController();
-    final TextEditingController descriptionController = TextEditingController();
-    final TextEditingController imageUrlController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Add New Plant"),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: plantNameController,
-                decoration: const InputDecoration(
-                  labelText: "Plant Name*",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: scientificNameController,
-                decoration: const InputDecoration(
-                  labelText: "Scientific Name*",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: minPPMController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        labelText: "Min PPM*",
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: TextField(
-                      controller: maxPPMController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        labelText: "Max PPM*",
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: descriptionController,
-                maxLines: 3,
-                decoration: const InputDecoration(
-                  labelText: "Description*",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: imageUrlController,
-                decoration: const InputDecoration(
-                  labelText: "Image URL (optional)",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (plantNameController.text.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Plant name is required")),
-                );
-                return;
-              }
-              
-              if (scientificNameController.text.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Scientific name is required")),
-                );
-                return;
-              }
-              
-              if (minPPMController.text.isEmpty || maxPPMController.text.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("PPM values are required")),
-                );
-                return;
-              }
-              
-              if (descriptionController.text.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Description is required")),
-                );
-                return;
-              }
-              
-              final newPlant = {
-                "scientificName": scientificNameController.text,
-                "standardPPM": "${minPPMController.text}-${maxPPMController.text}",
-                "description": descriptionController.text,
-                "imageUrl": imageUrlController.text.isNotEmpty 
-                    ? imageUrlController.text 
-                    : "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce",
-              };
-              
-              setState(() {
-                plantData[plantNameController.text] = newPlant;
-                selectedPlant = plantNameController.text;
-                currentPPM = (double.parse(minPPMController.text) + double.parse(maxPPMController.text)) / 2;
-              });
-              
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text("${plantNameController.text} has been added successfully!"),
-                  duration: const Duration(seconds: 2),
-                ),
-              );
-              
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-            child: const Text("Add Plant"),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildInfoRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -258,33 +114,41 @@ class _DashboardPageState extends State<DashboardPage> {
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
-              expandedHeight: 120,
+              expandedHeight: 180,
               flexibleSpace: FlexibleSpaceBar(
                 background: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.green[700]!, Colors.green[400]!],
+                      colors: [Colors.green[800]!, Colors.green[600]!],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 16, bottom: 16),
+                    padding: const EdgeInsets.only(left: 24, bottom: 24),
                     child: Align(
                       alignment: Alignment.bottomLeft,
-                      child: Text(
-                        "My Garden",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 10,
-                              color: Colors.black.withOpacity(0.3),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Selamat Datang,",
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.9),
+                              fontSize: 18,
                             ),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(height: 4),
+                          const Text(
+                            "My Garden",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -293,7 +157,6 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
             SliverToBoxAdapter(child: _buildHeader(context)),
             SliverToBoxAdapter(child: _buildGardenCard(context, plantInfo)),
-            SliverToBoxAdapter(child: _buildAddGrowingPlace(context)),
             SliverToBoxAdapter(child: _buildShortcuts(context)),
             SliverToBoxAdapter(child: _buildRecentNotes()),
           ],
@@ -304,64 +167,68 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Widget _buildHeader(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
             ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                value: selectedPlant,
-                icon: const Icon(Icons.arrow_drop_down, color: Colors.green),
-                items: plantData.keys
-                    .map((plant) => DropdownMenuItem(
-                          value: plant,
-                          child: Text(
-                            plant,
-                            style: const TextStyle(color: Colors.green),
-                          ),
-                        ))
-                    .toList(),
-                onChanged: (value) {
-                  if (value != null) {
-                    setState(() {
-                      selectedPlant = value;
-                      final range = plantData[value]!['standardPPM'].split('-');
-                      currentPPM = (double.parse(range[0]) + double.parse(range[1])) / 2;
-                    });
-                  }
-                },
-              ),
-            ),
+          ],
+        ),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<String>(
+            value: selectedPlant,
+            icon: const Icon(Icons.arrow_drop_down, color: Colors.green),
+            isExpanded: true,
+            style: const TextStyle(color: Colors.black87, fontSize: 16),
+            items: plantData.keys
+                .map((plant) => DropdownMenuItem(
+                      value: plant,
+                      child: Text(
+                        plant,
+                        style: const TextStyle(color: Colors.black87),
+                      ),
+                    ))
+                .toList(),
+            onChanged: (value) {
+              if (value != null) {
+                setState(() {
+                  selectedPlant = value;
+                  final range = plantData[value]!['standardPPM'].split('-');
+                  currentPPM = (double.parse(range[0]) + double.parse(range[1])) / 2;
+                });
+              }
+            },
+            hint: const Text("Pilih Tanaman"),
           ),
-          const SizedBox(width: 40),
-        ],
+        ),
       ),
     );
   }
 
   Widget _buildGardenCard(BuildContext context, Map<String, dynamic> plantInfo) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      child: Container(
+        decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
+            ),
+          ],
         ),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -373,25 +240,30 @@ class _DashboardPageState extends State<DashboardPage> {
                     style: TextStyle(
                       color: Colors.green[700],
                       fontStyle: FontStyle.italic,
+                      fontSize: 14,
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: Colors.green[50],
+                      gradient: LinearGradient(
+                        colors: [Colors.green[500]!, Colors.green[400]!],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       "PPM: ${currentPPM.toStringAsFixed(0)}",
-                      style: TextStyle(
-                        color: Colors.green[800],
+                      style: const TextStyle(
+                        color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
               Text(
                 selectedPlant.toUpperCase(),
                 style: const TextStyle(
@@ -406,7 +278,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: () => _showKnowledgeDialog(context),
-                      icon: const Icon(Icons.info_outline),
+                      icon: const Icon(Icons.info_outline, size: 20),
                       label: const Text("Plant Info"),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green[50],
@@ -414,37 +286,20 @@ class _DashboardPageState extends State<DashboardPage> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      plantInfo['imageUrl'],
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.cover,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return Container(
-                          width: 80,
-                          height: 80,
-                          color: Colors.grey[200],
-                          child: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      },
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          width: 80,
-                          height: 80,
-                          color: Colors.grey[200],
-                          child: const Icon(Icons.image_not_supported),
-                        );
-                      },
+                  const SizedBox(width: 16),
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      image: DecorationImage(
+                        image: NetworkImage(plantInfo['imageUrl']),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ],
@@ -456,42 +311,9 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildAddGrowingPlace(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              Icon(Icons.add_circle_outline, color: Colors.green[700]),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  "Add another growing place (balcony, plot, terrace)",
-                  style: TextStyle(color: Colors.grey[700]),
-                ),
-              ),
-              FloatingActionButton(
-                onPressed: () => _showAddPlantDialog(context),
-                backgroundColor: Colors.green,
-                mini: true,
-                child: const Icon(Icons.add, color: Colors.white),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildShortcuts(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -499,9 +321,13 @@ class _DashboardPageState extends State<DashboardPage> {
             "Quick Actions",
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+          const SizedBox(height: 16),
+          GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 3,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
             children: [
               _shortcutButton(Icons.notes, "Notes", Colors.green[100]!, Colors.green, () {
                 Navigator.push(context, MaterialPageRoute(builder: (_) => NotesPage(
@@ -534,19 +360,33 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget _shortcutButton(IconData icon, String label, Color bgColor, Color iconColor, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(16),
       child: Container(
-        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: bgColor,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 28, color: iconColor),
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, size: 28, color: iconColor),
+            ),
             const SizedBox(height: 8),
-            Text(label, style: TextStyle(color: iconColor, fontWeight: FontWeight.bold)),
+            Text(label, style: TextStyle(color: Colors.grey[800], fontWeight: FontWeight.w500)),
           ],
         ),
       ),
@@ -555,67 +395,135 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Widget _buildRecentNotes() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Recent Notes",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Recent Notes",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              if (notes.isNotEmpty)
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => NotesPage(
+                      notes: notes, 
+                      onNoteAdded: (note) {
+                        setState(() {
+                          notes.add(note);
+                        });
+                      },
+                      onNoteDeleted: (note) {
+                        setState(() {
+                          notes.remove(note);
+                        });
+                      },
+                    )));
+                  },
+                  child: const Text("View All", style: TextStyle(color: Colors.green)),
+                ),
+            ],
           ),
           const SizedBox(height: 12),
-          ...notes.take(3).map((note) => _buildNoteItem(note)),
-          if (notes.length > 3) 
-            TextButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => NotesPage(
-                  notes: notes, 
-                  onNoteAdded: (note) {
-                    setState(() {
-                      notes.add(note);
-                    });
-                  },
-                  onNoteDeleted: (note) {
-                    setState(() {
-                      notes.remove(note);
-                    });
-                  },
-                )));
-              },
-              child: const Text("View all notes", style: TextStyle(color: Colors.green)),
-            ),
+          if (notes.isEmpty)
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.grey[50],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  Icon(Icons.note_add, size: 48, color: Colors.grey[400]),
+                  const SizedBox(height: 8),
+                  Text(
+                    "No notes yet",
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
+                  const SizedBox(height: 8),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => NotesPage(
+                        notes: notes, 
+                        onNoteAdded: (note) {
+                          setState(() {
+                            notes.add(note);
+                          });
+                        },
+                        onNoteDeleted: (note) {
+                          setState(() {
+                            notes.remove(note);
+                          });
+                        },
+                      )));
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text("Create First Note"),
+                  ),
+                ],
+              ),
+            )
+          else
+            ...notes.take(3).map((note) => _buildNoteItem(note)),
         ],
       ),
     );
   }
 
   Widget _buildNoteItem(Note note) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      elevation: 1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  note.title,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                Expanded(
+                  child: Text(
+                    note.title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 Text(
                   DateFormat('dd.MM.yyyy').format(note.date),
-                  style: TextStyle(color: Colors.grey[600]),
+                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
                 ),
               ],
             ),
             const SizedBox(height: 8),
-            Text(note.content),
+            Text(
+              note.content,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: Colors.grey[700]),
+            ),
             if (note.garden.isNotEmpty) ...[
               const SizedBox(height: 8),
               Chip(
@@ -804,6 +712,7 @@ class _NotesPageState extends State<NotesPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Notes"),
+        elevation: 0,
       ),
       body: Column(
         children: [
@@ -816,7 +725,10 @@ class _NotesPageState extends State<NotesPage> {
                 hintText: "Search notes...",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
                 ),
+                filled: true,
+                fillColor: Colors.grey[100],
               ),
               onChanged: _filterNotes,
             ),
@@ -830,7 +742,11 @@ class _NotesPageState extends State<NotesPage> {
                 return Dismissible(
                   key: Key(note.title + note.date.toString()),
                   background: Container(
-                    color: Colors.red,
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                     alignment: Alignment.centerRight,
                     padding: const EdgeInsets.only(right: 20),
                     child: const Icon(Icons.delete, color: Colors.white),
@@ -838,10 +754,18 @@ class _NotesPageState extends State<NotesPage> {
                   onDismissed: (direction) {
                     _deleteNote(note);
                   },
-                  child: Card(
+                  child: Container(
                     margin: const EdgeInsets.only(bottom: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 6,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(16),
@@ -851,11 +775,13 @@ class _NotesPageState extends State<NotesPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                note.title,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                              Expanded(
+                                child: Text(
+                                  note.title,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
                                 ),
                               ),
                               IconButton(
@@ -918,19 +844,22 @@ class _CalendarPageState extends State<CalendarPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Calendar History")),
+      appBar: AppBar(
+        title: const Text("Calendar History"),
+        elevation: 0,
+      ),
       body: Column(
         children: [
           Container(
             margin: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
+                  color: Colors.grey.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
@@ -997,22 +926,53 @@ class _CalendarPageState extends State<CalendarPage> {
           ),
           const SizedBox(height: 8),
           if (eventsForSelectedDay.isEmpty)
-            const Padding(
-              padding: EdgeInsets.all(16),
-              child: Text("No events scheduled for this day"),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  children: [
+                    Icon(Icons.event_note, size: 48, color: Colors.grey[400]),
+                    const SizedBox(height: 8),
+                    const Text(
+                      "No events scheduled for this day",
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
             )
           else
             Expanded(
               child: ListView.builder(
                 itemCount: eventsForSelectedDay.length,
                 itemBuilder: (context, index) {
-                  return Card(
+                  return Container(
                     margin: const EdgeInsets.only(bottom: 8),
-                    shape: RoundedRectangleBorder(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 6,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
                     child: ListTile(
-                      leading: const Icon(Icons.circle, color: Colors.green, size: 12),
+                      leading: Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
                       title: Text(eventsForSelectedDay[index]),
                       trailing: IconButton(
                         icon: const Icon(Icons.add_alert, color: Colors.green),
@@ -1025,19 +985,22 @@ class _CalendarPageState extends State<CalendarPage> {
                 },
               ),
             ),
-          ElevatedButton(
-            onPressed: () {
-              _showAddEventDialog();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: ElevatedButton(
+              onPressed: () {
+                _showAddEventDialog();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                minimumSize: const Size(double.infinity, 50),
               ),
-              minimumSize: const Size(double.infinity, 50),
+              child: const Text("Add New Event"),
             ),
-            child: const Text("Add New Event"),
           ),
         ],
       ),
@@ -1091,7 +1054,10 @@ class ReminderPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Reminder")),
+      appBar: AppBar(
+        title: const Text("Reminder"),
+        elevation: 0,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -1102,10 +1068,17 @@ class ReminderPage extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 6,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
               ),
               child: const Padding(
                 padding: EdgeInsets.all(16),
