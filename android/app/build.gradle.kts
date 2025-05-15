@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.hidroponiktkkc"
-        minSdk = 21 // Pastikan minSdk >= 21
+        minSdk = 23
         targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -43,4 +43,5 @@ dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
     implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
     implementation("com.google.firebase:firebase-analytics")
+    implementation ("com.google.firebase:firebase-auth")
 }

@@ -1,22 +1,22 @@
 {
   "project_info": {
-    "project_number": "238476720174",
-    "firebase_url": "https://hidroponiktkkc-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "project_id": "hidroponiktkkc",
-    "storage_bucket": "hidroponiktkkc.firebasestorage.app"
+    "project_number": "1024967378878",
+    "firebase_url": "https://gaulhidroponik-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "gaulhidroponik",
+    "storage_bucket": "gaulhidroponik.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:238476720174:android:b21783e4a203312cb687bf",
+        "mobilesdk_app_id": "1:1024967378878:android:41eeec791c5f2d68841bef",
         "android_client_info": {
-          "package_name": "com.example.hidroponiktkkc"
+          "package_name": "com.example.gaulhidroponik"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDHEBe1GwBfQe4nYmdGdgmmk3nStYLlVCw"
+          "current_key": "AIzaSyCCGyZudvuSeUq3xXDtQbNQ9xF9OMeFhnU"
         }
       ],
       "services": {
@@ -27,15 +27,15 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:238476720174:android:63032864b16a85cfb687bf",
+        "mobilesdk_app_id": "1:1024967378878:android:140ea9ceeefdebf8841bef",
         "android_client_info": {
-          "package_name": "com.example.project_hidroponnik"
+          "package_name": "com.example.hidroponiktkkc"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDHEBe1GwBfQe4nYmdGdgmmk3nStYLlVCw"
+          "current_key": "AIzaSyCCGyZudvuSeUq3xXDtQbNQ9xF9OMeFhnU"
         }
       ],
       "services": {

@@ -1,10 +1,14 @@
+// filepath: [main.dart](http://_vscodecontentref_/1)
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'pages/monitoring_page.dart';
 import 'pages/dashboard_page.dart';
 import 'pages/settings_page.dart';
+import 'pages/login_page.dart';
+import 'pages/register_page.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,19 +55,44 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.green,
         scaffoldBackgroundColor: Colors.grey[50],
       ),
-      home: Scaffold(
-        body: _pages[_selectedIndex],
-        bottomNavigationBar: CurvedNavigationBar(
-          index: _selectedIndex,
-          height: 60.0,
-          color: Colors.green,
-          buttonBackgroundColor: Colors.greenAccent,
-          backgroundColor: Colors.white,
-          animationCurve: Curves.easeInOut,
-          animationDuration: const Duration(milliseconds: 300),
-          items: _navBarItems,
-          onTap: _onItemTapped,
-        ),
+      routes: {
+        '/login': (context) => LoginPage(
+              onLoginSuccess: () => setState(() {}),
+            ),
+        '/register': (context) => RegisterPage(
+              onRegisterSuccess: () => Navigator.pop(context),
+            ),
+      },
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+          if (snapshot.hasData) {
+            // User sudah login, tampilkan halaman utama dengan navbar
+            return Scaffold(
+              body: _pages[_selectedIndex],
+              bottomNavigationBar: CurvedNavigationBar(
+                index: _selectedIndex,
+                height: 60.0,
+                color: Colors.green,
+                buttonBackgroundColor: Colors.greenAccent,
+                backgroundColor: Colors.white,
+                animationCurve: Curves.easeInOut,
+                animationDuration: const Duration(milliseconds: 300),
+                items: _navBarItems,
+                onTap: _onItemTapped,
+              ),
+            );
+          }
+          // User belum login, tampilkan halaman login
+          return LoginPage(
+            onLoginSuccess: () => setState(() {}),
+          );
+        },
       ),
     );
   }

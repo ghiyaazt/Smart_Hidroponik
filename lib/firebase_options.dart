@@ -4,7 +4,6 @@ import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
-
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
 /// Example:
@@ -24,9 +23,15 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         return windows;
       case TargetPlatform.linux:
@@ -42,48 +47,33 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBb4Pzbc75EjxsENHkNVjsQf_DbKGNyNF0',
-    appId: '1:238476720174:web:8d4d7370dc620d80b687bf',
-    messagingSenderId: '238476720174',
-    projectId: 'hidroponiktkkc',
-    authDomain: 'hidroponiktkkc.firebaseapp.com',
-    storageBucket: 'hidroponiktkkc.firebasestorage.app',
-    measurementId: 'G-1FK6MCZYEL',
+    apiKey: 'AIzaSyAgGp1VqW2bGM4fazIn_glPJFggbxlgT0Q',
+    appId: '1:1024967378878:web:1988e4251d91344c841bef',
+    messagingSenderId: '1024967378878',
+    projectId: 'gaulhidroponik',
+    authDomain: 'gaulhidroponik.firebaseapp.com',
+    databaseURL: 'https://gaulhidroponik-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'gaulhidroponik.firebasestorage.app',
+    measurementId: 'G-88BMM3P93B',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDHEBe1GwBfQe4nYmdGdgmmk3nStYLlVCw',
-    appId: '1:238476720174:android:b21783e4a203312cb687bf',
-    messagingSenderId: '238476720174',
-    projectId: 'hidroponiktkkc',
-    storageBucket: 'hidroponiktkkc.firebasestorage.app',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDPj1TdwaMvIZAUARsO7R_szFT0OLBk1lo',
-    appId: '1:238476720174:ios:76058ff8b51798a5b687bf',
-    messagingSenderId: '238476720174',
-    projectId: 'hidroponiktkkc',
-    storageBucket: 'hidroponiktkkc.firebasestorage.app',
-    iosBundleId: 'com.example.hidroponiktkkc',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDPj1TdwaMvIZAUARsO7R_szFT0OLBk1lo',
-    appId: '1:238476720174:ios:76058ff8b51798a5b687bf',
-    messagingSenderId: '238476720174',
-    projectId: 'hidroponiktkkc',
-    storageBucket: 'hidroponiktkkc.firebasestorage.app',
-    iosBundleId: 'com.example.hidroponiktkkc',
+    apiKey: 'AIzaSyCCGyZudvuSeUq3xXDtQbNQ9xF9OMeFhnU',
+    appId: '1:1024967378878:android:140ea9ceeefdebf8841bef',
+    messagingSenderId: '1024967378878',
+    projectId: 'gaulhidroponik',
+    databaseURL: 'https://gaulhidroponik-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'gaulhidroponik.firebasestorage.app',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyBb4Pzbc75EjxsENHkNVjsQf_DbKGNyNF0',
-    appId: '1:238476720174:web:0fa036cacdc56187b687bf',
-    messagingSenderId: '238476720174',
-    projectId: 'hidroponiktkkc',
-    authDomain: 'hidroponiktkkc.firebaseapp.com',
-    storageBucket: 'hidroponiktkkc.firebasestorage.app',
-    measurementId: 'G-4E84F40WRC',
+    apiKey: 'AIzaSyAgGp1VqW2bGM4fazIn_glPJFggbxlgT0Q',
+    appId: '1:1024967378878:web:546a7be595bdab3a841bef',
+    messagingSenderId: '1024967378878',
+    projectId: 'gaulhidroponik',
+    authDomain: 'gaulhidroponik.firebaseapp.com',
+    databaseURL: 'https://gaulhidroponik-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'gaulhidroponik.firebasestorage.app',
+    measurementId: 'G-7WQ8J6L4BJ',
   );
 }
