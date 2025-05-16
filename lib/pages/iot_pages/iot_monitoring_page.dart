@@ -3,6 +3,65 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'IoT Monitoring Demo',
+      theme: ThemeData(primarySwatch: Colors.green),
+      home: const HomePage(),
+    );
+  }
+}
+
+// Halaman awal (contoh) untuk navigasi ke IotMonitoringPage dengan animasi slide + fade
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  Route createRouteToIotMonitoringPage() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          const IotMonitoringPage(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const beginOffset = Offset(0, 1); // Slide dari bawah
+        const endOffset = Offset.zero;
+        final tweenSlide = Tween(begin: beginOffset, end: endOffset)
+            .chain(CurveTween(curve: Curves.ease));
+        final tweenFade = Tween(begin: 0.0, end: 1.0);
+
+        return SlideTransition(
+          position: animation.drive(tweenSlide),
+          child: FadeTransition(
+            opacity: animation.drive(tweenFade),
+            child: child,
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Home')),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.of(context).push(createRouteToIotMonitoringPage());
+          },
+          child: const Text('Buka IoT Monitoring'),
+        ),
+      ),
+    );
+  }
+}
+
+// Halaman IoT Monitoring dengan tampilan dan animasi internal (sesuai kode kamu)
 class IotMonitoringPage extends StatefulWidget {
   const IotMonitoringPage({super.key});
 
@@ -36,7 +95,8 @@ class _IotMonitoringPageState extends State<IotMonitoringPage> {
   }
 
   Future<void> fetchVolumeAir() async {
-    final snapshot = await _database.child('/hidroponik/monitoring/volume_air').get();
+    final snapshot =
+        await _database.child('/hidroponik/monitoring/volume_air').get();
     if (snapshot.exists) {
       setState(() {
         volumeAir = snapshot.value.toString();
@@ -86,7 +146,6 @@ class _IotMonitoringPageState extends State<IotMonitoringPage> {
           padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
           child: Column(
             children: [
-              // Hero Icon Transition
               Hero(
                 tag: 'iot-icon',
                 child: Icon(
@@ -96,8 +155,6 @@ class _IotMonitoringPageState extends State<IotMonitoringPage> {
                 ),
               ),
               const SizedBox(height: 20),
-
-              // Animated Section
               TweenAnimationBuilder<double>(
                 duration: const Duration(milliseconds: 600),
                 tween: Tween(begin: 0, end: 1),
@@ -110,7 +167,6 @@ class _IotMonitoringPageState extends State<IotMonitoringPage> {
                 ),
                 child: Column(
                   children: [
-                    // TDS & Volume Air
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -120,8 +176,10 @@ class _IotMonitoringPageState extends State<IotMonitoringPage> {
                             child: _buildCard(
                               icon: Icons.science,
                               label: 'TDS',
-                              value: '${double.tryParse(tds)?.toStringAsFixed(1) ?? "--"} ppm',
-                              percent: ((double.tryParse(tds) ?? 0.0) / 1600.0).clamp(0.0, 1.0),
+                              value:
+                                  '${double.tryParse(tds)?.toStringAsFixed(1) ?? "--"} ppm',
+                              percent: ((double.tryParse(tds) ?? 0.0) / 1600.0)
+                                  .clamp(0.0, 1.0),
                             ),
                           ),
                         ),
@@ -132,15 +190,17 @@ class _IotMonitoringPageState extends State<IotMonitoringPage> {
                             child: _buildCard(
                               icon: Icons.water,
                               label: 'Volume',
-                              value: '${double.tryParse(volumeAir)?.toStringAsFixed(1) ?? "--"} L',
-                              percent: ((double.tryParse(volumeAir) ?? 0.0) / 18.0).clamp(0.0, 1.0),
+                              value:
+                                  '${double.tryParse(volumeAir)?.toStringAsFixed(1) ?? "--"} L',
+                              percent:
+                                  ((double.tryParse(volumeAir) ?? 0.0) / 18.0)
+                                      .clamp(0.0, 1.0),
                             ),
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 0),
-                    // Relay 1 & Relay 2
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [

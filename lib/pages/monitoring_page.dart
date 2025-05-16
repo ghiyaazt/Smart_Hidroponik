@@ -24,7 +24,6 @@ class IotPage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // 🔥 Animated Hero Icon
                   TweenAnimationBuilder<double>(
                     duration: const Duration(milliseconds: 800),
                     tween: Tween(begin: 0.0, end: 1.0),
@@ -46,8 +45,6 @@ class IotPage extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 20),
-
-                  // Judul
                   Text(
                     'Smart IoT System',
                     style: GoogleFonts.poppins(
@@ -66,8 +63,6 @@ class IotPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 40),
-
-                  // Tombol Monitoring
                   _buildAnimatedButton(
                     context,
                     icon: Icons.monitor_heart,
@@ -75,13 +70,12 @@ class IotPage extends StatelessWidget {
                     page: const IotMonitoringPage(),
                   ),
                   const SizedBox(height: 20),
-
-                  // Tombol Controlling
                   _buildAnimatedButton(
                     context,
                     icon: Icons.settings_remote,
                     label: 'Controlling',
-                    page: IotControllingPage(),
+                    page: const IotControllingPage(),
+                    useCustomTransition: true, // <-- ini untuk animasi khusus
                   ),
                 ],
               ),
@@ -95,7 +89,8 @@ class IotPage extends StatelessWidget {
   Widget _buildAnimatedButton(BuildContext context,
       {required IconData icon,
       required String label,
-      required Widget page}) {
+      required Widget page,
+      bool useCustomTransition = false}) {
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 600),
       tween: Tween(begin: 0.0, end: 1.0),
@@ -117,10 +112,14 @@ class IotPage extends StatelessWidget {
           ),
         ),
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => page),
-          );
+          if (useCustomTransition) {
+            Navigator.push(context, _createRoute(page));
+          } else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => page),
+            );
+          }
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
@@ -130,6 +129,30 @@ class IotPage extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Route _createRoute(Widget page) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        // Slide from right + fade
+        const beginOffset = Offset(1.0, 0.0);
+        const endOffset = Offset.zero;
+        final tweenOffset = Tween(begin: beginOffset, end: endOffset)
+            .chain(CurveTween(curve: Curves.easeOut));
+
+        final fadeTween = Tween(begin: 0.0, end: 1.0);
+
+        return SlideTransition(
+          position: animation.drive(tweenOffset),
+          child: FadeTransition(
+            opacity: animation.drive(fadeTween),
+            child: child,
+          ),
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 400),
     );
   }
 }
