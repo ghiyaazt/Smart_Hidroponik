@@ -44,6 +44,8 @@ dependencies:
   font_awesome_flutter: ^10.8.0
   google_fonts: ^6.2.1
   firebase_auth: ^5.5.3
+  dropdown_button2: ^2.3.9
+  percent_indicator: ^4.2.5
 
 dev_dependencies:
   flutter_test:

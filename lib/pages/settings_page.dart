@@ -1,72 +1,55 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:hidroponiktkkc/pages/login_page.dart';
 
-class SettingsPage extends StatefulWidget {
+class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
-
-  @override
-  _SettingsPageState createState() => _SettingsPageState();
-}
-
-class _SettingsPageState extends State<SettingsPage> {
-  bool _isNotificationEnabled = false; // Status notifikasi
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      appBar: AppBar(
+        title: Text(
+          'Pengaturan',
+          style: GoogleFonts.poppins(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
+        ),
+        backgroundColor: const Color(0xFF728C5A),
+      ),
+      backgroundColor: const Color(0xFF728C5A),
+      body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'Pengaturan Notifikasi',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 20),
-            ListTile(
-              title: const Text('Aktifkan Notifikasi'),
-              trailing: Switch(
-                value: _isNotificationEnabled,
-                onChanged: (bool value) {
-                  setState(() {
-                    _isNotificationEnabled = value; // Mengubah status notifikasi
-                  });
-                  // Anda dapat menambahkan logika untuk menyimpan status notifikasi di sini
+            SizedBox(
+              width: 200,
+              child: ElevatedButton(
+                onPressed: () {
+                  // Di sini biasanya sign out dari Firebase Auth
+                  // Untuk sekarang, kita navigasi kembali ke login
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
                 },
-              ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Logika untuk menyimpan pengaturan (misalnya, ke Firebase atau SharedPreferences)
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Pengaturan disimpan!')),
-                );
-              },
-              child: const Text('Simpan Pengaturan'),
-            ),
-            const SizedBox(height: 40),
-            const Divider(),
-            const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: () async {
-                await FirebaseAuth.instance.signOut();
-                if (context.mounted) {
-                  Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
-                }
-              },
-              icon: const Icon(Icons.logout),
-              label: const Text('Logout'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFEBFADC),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
-                minimumSize: const Size(double.infinity, 48),
+                child: Text(
+                  'Keluar',
+                  style: GoogleFonts.poppins(
+                    color: const Color(0xFF102F15),
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
           ],
