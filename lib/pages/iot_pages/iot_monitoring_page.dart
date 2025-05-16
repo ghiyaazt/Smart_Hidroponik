@@ -62,7 +62,6 @@ class _IotMonitoringPageState extends State<IotMonitoringPage> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,58 +86,85 @@ class _IotMonitoringPageState extends State<IotMonitoringPage> {
           padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
           child: Column(
             children: [
-              // TDS & Volume Air
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: fetchTDS,
-                      child: _buildCard(
-                        icon: Icons.science,
-                        label: 'TDS',
-                        value: '${double.tryParse(tds)?.toStringAsFixed(1) ?? "--"} ppm',
-                        percent: ((double.tryParse(tds) ?? 0.0) / 1600.0).clamp(0.0, 1.0),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: fetchVolumeAir,
-                      child: _buildCard(
-                        icon: Icons.water,
-                        label: 'Volume',
-                        value: '${double.tryParse(volumeAir)?.toStringAsFixed(1) ?? "--"} L',
-                        percent: ((double.tryParse(volumeAir) ?? 0.0) / 18.0).clamp(0.0, 1.0),
-                      ),
-                    ),
-                  ),
-                ],
+              // Hero Icon Transition
+              Hero(
+                tag: 'iot-icon',
+                child: Icon(
+                  Icons.devices_other,
+                  color: Colors.white.withOpacity(0.8),
+                  size: 80,
+                ),
               ),
-              const SizedBox(height: 0),
-              // Relay 1 & Relay 2
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child: _buildCard(
-                      icon: Icons.water_drop,
-                      label: 'Nutrisi A',
-                      value: relay1Status,
-                      percent: relay1Status == "ON" ? 1.0 : 0.0,
-                    ),
+              const SizedBox(height: 20),
+
+              // Animated Section
+              TweenAnimationBuilder<double>(
+                duration: const Duration(milliseconds: 600),
+                tween: Tween(begin: 0, end: 1),
+                builder: (context, value, child) => Opacity(
+                  opacity: value,
+                  child: Transform.translate(
+                    offset: Offset(0, (1 - value) * 30),
+                    child: child,
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: _buildCard(
-                      icon: Icons.opacity ,
-                      label: 'Nutrisi B',
-                      value: relay2Status,
-                      percent: relay2Status == "ON" ? 1.0 : 0.0,
+                ),
+                child: Column(
+                  children: [
+                    // TDS & Volume Air
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: fetchTDS,
+                            child: _buildCard(
+                              icon: Icons.science,
+                              label: 'TDS',
+                              value: '${double.tryParse(tds)?.toStringAsFixed(1) ?? "--"} ppm',
+                              percent: ((double.tryParse(tds) ?? 0.0) / 1600.0).clamp(0.0, 1.0),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: fetchVolumeAir,
+                            child: _buildCard(
+                              icon: Icons.water,
+                              label: 'Volume',
+                              value: '${double.tryParse(volumeAir)?.toStringAsFixed(1) ?? "--"} L',
+                              percent: ((double.tryParse(volumeAir) ?? 0.0) / 18.0).clamp(0.0, 1.0),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 0),
+                    // Relay 1 & Relay 2
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Expanded(
+                          child: _buildCard(
+                            icon: Icons.water_drop,
+                            label: 'Nutrisi A',
+                            value: relay1Status,
+                            percent: relay1Status == "ON" ? 1.0 : 0.0,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: _buildCard(
+                            icon: Icons.opacity,
+                            label: 'Nutrisi B',
+                            value: relay2Status,
+                            percent: relay2Status == "ON" ? 1.0 : 0.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

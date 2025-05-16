@@ -6,6 +6,8 @@ import 'package:hidroponiktkkc/pages/dashboard_page.dart';
 import 'package:hidroponiktkkc/pages/monitoring_page.dart';
 import 'package:hidroponiktkkc/pages/settings_page.dart';
 import 'package:hidroponiktkkc/pages/login_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,12 +27,43 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const LoginPage(), // Halaman pertama adalah Login
+      home: FutureBuilder(
+        future: _checkLoginStatus(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          } else {
+            return snapshot.data ?? const LoginPage();
+          }
+        },
+      ),
       debugShowCheckedModeBanner: false,
       routes: {
-        '/main': (context) => const MainPage(), // Route ke halaman utama setelah login
+        '/main': (context) => const MainPage(),
       },
     );
+  }
+
+  static Future<Widget?> _checkLoginStatus() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+      
+      if (isLoggedIn) {
+        final user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          return const MainPage();
+        } else {
+          await prefs.setBool('isLoggedIn', false);
+          return null;
+        }
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
   }
 }
 
